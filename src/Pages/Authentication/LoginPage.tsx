@@ -1,17 +1,50 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import axios, { AxiosError } from 'axios';
+import { Link, useNavigate } from 'react-router-dom';
 
+const UserLoginPage: React.FC = () => {
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [error, setError] = useState<string>(''); // Error message
+  const [isLoading, setIsLoading] = useState<boolean>(false); // Loading state
+  const [showPassword, setShowPassword] = useState<boolean>(false); // Password visibility
 
-const LoginPage: React.FC = () => {
+  const navigate = useNavigate();
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true); // Start loading
+
+    const endpoint = 'http://localhost:8080/auth/login/user';
+
+    try {
+      const response = await axios.post(endpoint, { email, password });
+
+      // Store email in localStorage after successful login
+      localStorage.setItem('userEmail', email);
+
+      alert(response.data.message); // Success message
+      navigate('/user-dashboard'); // Navigate to User dashboard
+    } catch (error) {
+      if (error instanceof AxiosError && error.response) {
+        const { message } = error.response.data;
+        setError(message || 'An error occurred. Please try again later.');
+      } else {
+        setError('An error occurred. Please try again later.');
+      }
+    } finally {
+      setIsLoading(false); // Stop loading
+    }
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="flex w-full max-w-4xl overflow-hidden rounded-xl bg-white shadow-lg">
-        {/* Left Section */}
-        <div className="w-1/2 p-8">
-          <h2 className="text-3xl font-bold text-gray-800">Login</h2>
-          <p className="mt-2 text-sm text-gray-600">Login to access your travelwise account</p>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-indigo-600 via-purple-500 to-pink-500">
+      <div className="flex w-full max-w-lg overflow-hidden rounded-xl shadow-xl bg-white p-8">
+        <div className="w-full">
+          <h2 className="text-4xl font-semibold text-center text-indigo-800 mb-6">User Login</h2>
+          <p className="text-lg text-center text-gray-600 mb-8">Login to access your account</p>
 
-          <form className="mt-8 space-y-6">
+          <form className="space-y-6" onSubmit={handleLogin}>
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                 Email
@@ -19,7 +52,10 @@ const LoginPage: React.FC = () => {
               <input
                 type="email"
                 id="email"
-                className="mt-1 w-full rounded-lg border-gray-300 p-3 focus:border-blue-500 focus:outline-none"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="mt-1 w-full rounded-lg border-2 border-gray-300 p-4 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                placeholder="Enter your email"
                 required
               />
             </div>
@@ -28,79 +64,55 @@ const LoginPage: React.FC = () => {
               <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                 Password
               </label>
-              <input
-                type="password"
-                id="password"
-                className="mt-1 w-full rounded-lg border-gray-300 p-3 focus:border-blue-500 focus:outline-none"
-                required
-              />
-            </div>
-
-            <div className="flex items-center justify-between">
-              <label className="flex items-center text-sm">
-                <input type="checkbox" className="mr-2 h-4 w-4" /> Remember me
-              </label>
-              <a href="#" className="text-sm text-blue-500 hover:underline">Forgot Password?</a>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium">Role:</label>
-              <div className="flex items-center space-x-4">
-                <label className="flex items-center">
-                  <input type="radio" name="role" value="user" className="mr-2" /> User
-                </label>
-                <label className="flex items-center">
-                  <input type="radio" name="role" value="consultant" className="mr-2" /> Consultant
-                </label>
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="mt-1 w-full rounded-lg border-2 border-gray-300 p-4 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  placeholder="Enter your password"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-3 flex items-center text-indigo-500"
+                >
+                  {showPassword ? 'Hide' : 'Show'}
+                </button>
               </div>
             </div>
 
+            {error && (
+              <p className="text-red-600 bg-red-100 border border-red-400 rounded-lg p-2 text-sm text-center">
+                {error}
+              </p>
+            )}
+
             <button
               type="submit"
-              className="w-full rounded-lg bg-blue-600 py-3 text-white hover:bg-blue-700"
+              disabled={isLoading}
+              className={`w-full rounded-lg py-3 text-white font-semibold transition-all transform ${
+                isLoading
+                  ? 'bg-gray-400 cursor-not-allowed'
+                  : 'bg-gradient-to-r from-indigo-400 to-blue-500 hover:scale-105 hover:shadow-lg'
+              }`}
             >
-              Login
+              {isLoading ? 'Logging in...' : 'Login'}
             </button>
           </form>
 
-          <p className="mt-4 text-center text-sm text-gray-600">
+          <p className="mt-6 text-center text-sm text-gray-600">
             Don't have an account?{' '}
-            <Link to="/signup" className="text-blue-500 hover:underline">
+            <Link to="/signup" className="text-indigo-500 font-semibold hover:underline">
               Sign up
             </Link>
           </p>
-
-            <p className="mt-4 text-center text-sm text-gray-600">
-              Already have an account?{' '}
-              <Link to="/dashboard" className="text-blue-500 hover:underline">
-                Go to Dashboard
-              </Link>
-            </p>
-
-          <div className="mt-6 flex justify-center space-x-4">
-            <button className="flex items-center justify-center w-10 h-10 rounded-full border">
-              <img src="/facebook-icon.svg" alt="Facebook" className="w-5" />
-            </button>
-            <button className="flex items-center justify-center w-10 h-10 rounded-full border">
-              <img src="/google-icon.svg" alt="Google" className="w-5" />
-            </button>
-            <button className="flex items-center justify-center w-10 h-10 rounded-full border">
-              <img src="/apple-icon.svg" alt="Apple" className="w-5" />
-            </button>
-          </div>
-        </div>
-
-        {/* Right Section */}
-        <div className="hidden md:flex w-1/2 bg-gray-110 items-center justify-center">
-          <img
-            src="/secure-login-illustration.jpg"
-            alt="Secure login"
-            className="h-auto max-w-full object-contain"
-          />
         </div>
       </div>
     </div>
   );
 };
 
-export default LoginPage;
+export default UserLoginPage;

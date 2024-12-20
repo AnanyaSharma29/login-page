@@ -1,58 +1,184 @@
-import React from 'react';
+import React, { useState } from 'react';
+import axios, { AxiosError } from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const SignupPage: React.FC = () => {
+  const [formData, setFormData] = useState({
+    firstname: '',
+    lastname: '',
+    email: '',
+    phonenumber: '',
+    password: '',
+    confirmPassword: '',
+    agreeToTerms: false,
+  });
+
+  const [error, setError] = useState<string>('');
+  const navigate = useNavigate();
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type, checked } = e.target;
+    setFormData({
+      ...formData,
+      [name]: type === 'checkbox' ? checked : value,
+    });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (formData.password !== formData.confirmPassword) {
+      alert('Passwords do not match!');
+      return;
+    }
+
+    if (!formData.agreeToTerms) {
+      alert('You must agree to the terms and conditions.');
+      return;
+    }
+
+    try {
+      const response = await axios.post('http://localhost:8080/auth/register', formData);
+      alert('Registration successful!');
+      navigate('/dashboard');
+    } catch (error) {
+      if (error instanceof AxiosError && error.response) {
+        setError(error.response.data.message || 'Registration failed.');
+      } else {
+        setError('An error occurred while registering.');
+      }
+    }
+  };
+
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
-        <h2 className="text-2xl font-bold mb-6 text-center">Sign up</h2>
-        <form>
+    <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-blue-200 via-teal-100 to-purple-200">
+      <div className="bg-white p-10 rounded-lg shadow-xl max-w-lg w-full">
+        <h2 className="text-3xl font-bold text-center text-teal-600 mb-6 font-poppins">
+          User Signup
+        </h2>
+        <form onSubmit={handleSubmit}>
+          {/* First Name */}
           <div className="mb-4">
-            <label className="block text-gray-700">First Name</label>
-            <input type="text" className="w-full px-3 py-2 border rounded-lg" />
+            <label className="block text-gray-700 font-medium mb-2">First Name</label>
+            <input
+              type="text"
+              name="firstname"
+              value={formData.firstname}
+              onChange={handleChange}
+              placeholder="Enter your first name"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-teal-400 focus:outline-none"
+              required
+            />
           </div>
+
+          {/* Last Name */}
           <div className="mb-4">
-            <label className="block text-gray-700">Last Name</label>
-            <input type="text" className="w-full px-3 py-2 border rounded-lg" />
+            <label className="block text-gray-700 font-medium mb-2">Last Name</label>
+            <input
+              type="text"
+              name="lastname"
+              value={formData.lastname}
+              onChange={handleChange}
+              placeholder="Enter your last name"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-teal-400 focus:outline-none"
+              required
+            />
           </div>
+
+          {/* Email */}
           <div className="mb-4">
-            <label className="block text-gray-700">Email</label>
-            <input type="email" className="w-full px-3 py-2 border rounded-lg" />
+            <label className="block text-gray-700 font-medium mb-2">Email</label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="Enter your email"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-teal-400 focus:outline-none"
+              required
+            />
           </div>
+
+          {/* Phone Number */}
           <div className="mb-4">
-            <label className="block text-gray-700">Phone Number</label>
-            <input type="tel" className="w-full px-3 py-2 border rounded-lg" />
+            <label className="block text-gray-700 font-medium mb-2">Phone Number</label>
+            <input
+              type="tel"
+              name="phonenumber"
+              value={formData.phonenumber}
+              onChange={handleChange}
+              placeholder="Enter your phone number"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-teal-400 focus:outline-none"
+              required
+            />
           </div>
+
+          {/* Password */}
           <div className="mb-4">
-            <label className="block text-gray-700">Password</label>
-            <input type="password" className="w-full px-3 py-2 border rounded-lg" />
+            <label className="block text-gray-700 font-medium mb-2">Password</label>
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="Enter your password"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-teal-400 focus:outline-none"
+              required
+            />
           </div>
+
+          {/* Confirm Password */}
           <div className="mb-4">
-            <label className="block text-gray-700">Confirm Password</label>
-            <input type="password" className="w-full px-3 py-2 border rounded-lg" />
+            <label className="block text-gray-700 font-medium mb-2">Confirm Password</label>
+            <input
+              type="password"
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              placeholder="Re-enter your password"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-teal-400 focus:outline-none"
+              required
+            />
           </div>
-          <div className="mb-4">
-            <input type="checkbox" className="mr-2" />
-            <label className="text-gray-700">I agree to the terms and privacy policies</label>
+
+          {/* Agree to Terms */}
+          <div className="mb-6 flex items-center">
+            <input
+              type="checkbox"
+              name="agreeToTerms"
+              checked={formData.agreeToTerms}
+              onChange={handleChange}
+              className="mr-2"
+            />
+            <label className="text-gray-700">I agree to the terms and conditions</label>
           </div>
-          <div className="mb-4">
-            <input type="checkbox" className="mr-2" />
-            <label className="text-gray-700">User</label>
-            <input type="checkbox" className="mr-2" />
-            <label className="text-gray-700">Consultant</label>
-          </div>
-          <button className="bg-blue-500 text-white px-4 py-2 rounded-lg w-full">Create account</button>
-          <div className="mt-4 text-center">
-            <a href="#" className="text-blue-500">Log in</a>
-          </div>
-          <div className="flex justify-center mt-4">
-            <button className="mr-2 bg-blue-500 text-white px-4 py-2 rounded-lg">Sign up with Facebook</button>
-            <button className="mr-2 bg-red-500 text-white px-4 py-2 rounded-lg">Sign up with Google</button>
-            <button className="bg-black text-white px-4 py-2 rounded-lg">Sign up with Apple</button>
-          </div>
+
+          {/* Error Message */}
+          {error && (
+            <p className="text-red-600 bg-red-100 border border-red-400 rounded-lg p-2 text-sm text-center">
+              {error}
+            </p>
+          )}
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            className="w-full bg-gradient-to-r from-teal-400 to-blue-500 text-white py-3 rounded-lg shadow-md hover:shadow-lg focus:ring-4 focus:ring-teal-300 transition-transform transform hover:scale-105"
+          >
+            Create Account
+          </button>
+
+          {/* Redirect to Login */}
+          <p className="mt-6 text-center text-sm text-gray-600">
+            Already have an account?{' '}
+            <a href="/login" className="text-teal-500 font-semibold hover:underline">
+              Log in
+            </a>
+          </p>
         </form>
       </div>
     </div>
   );
-}
+};
 
 export default SignupPage;
