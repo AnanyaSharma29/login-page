@@ -28,9 +28,13 @@ import Clients from './Pages/Consultant/Clients';
 import Availability from './Pages/Consultant/Availability';
 import Messages from './Pages/Consultant/Messages';
 import Settings from './Pages/Consultant/Settings';
+import MusicPlayer from './Pages/components/MusicPlayer';
+
 function App() {
   return (
     <Router>
+            <div>
+            <MusicPlayer /> {/* MusicPlayer added globally */}
       <Routes>
         {/* General Routes */}
         <Route path="/" element={<HomePage />} />
@@ -74,6 +78,7 @@ function App() {
         
 
       </Routes>
+      </div>
     </Router>
   );
 }
