@@ -1,15 +1,31 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 
 const Header: React.FC = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login state
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const location = useLocation(); // Get the current route
+
+  useEffect(() => {
+    // Check if the user is logged in from localStorage
+    const loginStatus = localStorage.getItem('isLoggedIn');
+    if (loginStatus === 'true') {
+      setIsLoggedIn(true);
+    }
+  }, []);
 
   const handleLogin = () => {
-    setIsLoggedIn(true); // Simulate login
+    setIsLoggedIn(true);
+    localStorage.setItem('isLoggedIn', 'true'); // Save login status to localStorage
   };
 
   const handleSignUp = () => {
-    setIsLoggedIn(true); // Simulate signup
+    setIsLoggedIn(true);
+    localStorage.setItem('isLoggedIn', 'true'); // Save signup status to localStorage
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    localStorage.removeItem('isLoggedIn'); // Remove login status from localStorage
   };
 
   return (
@@ -18,7 +34,7 @@ const Header: React.FC = () => {
         {/* Logo Section */}
         <div className="text-3xl font-bold">
           <Link to="/" className="hover:text-yellow-400 drop-shadow-lg">
-          MindCare
+            MindCare
           </Link>
         </div>
 
@@ -31,10 +47,10 @@ const Header: React.FC = () => {
         </nav>
 
         {/* Conditional rendering based on login state */}
-        {!isLoggedIn ? (
+        {location.pathname !== '/login' && !isLoggedIn ? (
           <div className="space-x-4">
             {/* Login and Sign Up buttons */}
-            <Link to="/login-page">
+            <Link to="/login">
               <button
                 className="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-800"
                 onClick={handleLogin} // Simulate login on click
@@ -42,7 +58,7 @@ const Header: React.FC = () => {
                 Login
               </button>
             </Link>
-            <Link to="/signup-page">
+            <Link to="/signup">
               <button
                 className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
                 onClick={handleSignUp} // Simulate signup on click
@@ -52,16 +68,25 @@ const Header: React.FC = () => {
             </Link>
           </div>
         ) : (
-          <div className="flex items-center space-x-4">
-            {/* Profile Icon after login */}
-            <div className="relative">
-              <img
-                src="profile-icon.png" // Replace with actual profile icon image URL
-                alt="Profile"
-                className="w-8 h-8 rounded-full"
-              />
+          location.pathname !== '/login' && (
+            <div className="flex items-center space-x-4">
+              {/* Profile Icon after login */}
+              <div className="relative">
+                <img
+                  src="/user.png" // Replace with actual profile icon image URL
+                  alt="Profile"
+                  className="w-8 h-8 rounded-full"
+                />
+              </div>
+              {/* Logout Button */}
+              <button
+                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                onClick={handleLogout}
+              >
+                Logout
+              </button>
             </div>
-          </div>
+          )
         )}
       </div>
     </header>
