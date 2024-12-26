@@ -38,11 +38,17 @@ const SignupPage: React.FC = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:8080/auth/register', formData);
+      // Make sure to send to the correct endpoint for user registration
+      const response = await axios.post('http://localhost:8080/auth/register/user', formData, {
+        headers: {
+          'Content-Type': 'application/json', // ensure this header is set
+        },
+      });
       alert('Registration successful!');
       navigate('/dashboard');
     } catch (error) {
       if (error instanceof AxiosError && error.response) {
+        // Handle error from server
         setError(error.response.data.message || 'Registration failed.');
       } else {
         setError('An error occurred while registering.');

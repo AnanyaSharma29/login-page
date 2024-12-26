@@ -1,61 +1,11 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
+
 const HomePage: React.FC = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login state
-
-  const handleLogin = () => {
-    setIsLoggedIn(true); // Set to true when the user logs in
-  };
-
-  const handleSignUp = () => {
-    setIsLoggedIn(true); // Set to true when the user signs up
-  };
-
   return (
     <div className="font-sans bg-gray-50">
-      {/* Header */}
-      <header className="flex justify-between items-center p-6 bg-white shadow-md">
-        <div className="text-2xl font-bold text-blue-700">Emergency and Mental Wellbeing</div>
-        <nav className="space-x-4">
-          
-          <Link to="/about" className="text-gray-700 hover:text-blue-700">About</Link>
-          <Link to="/services" className="text-gray-700 hover:text-blue-700">Services</Link>
-          <Link to="/contact" className="text-gray-700 hover:text-blue-700">Contact Us</Link>
-        </nav>
-        {/* Login/Signup or Profile Logo - Only show if not logged in */}
-        {!isLoggedIn ? (
-          <div className="space-x-4">
-            <Link to="/login-page">
-              <button
-                className="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-800"
-                onClick={handleLogin}
-              >
-                Login
-              </button>
-            </Link>
-            <Link to="/signup-page">
-              <button
-                className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-                onClick={handleSignUp}
-              >
-                Sign Up
-              </button>
-            </Link>
-          </div>
-        ) : (
-          <div className="flex items-center space-x-4">
-            {/* Profile Icon */}
-            <div className="relative">
-              <img
-                src="profile-icon.png" // Replace with actual profile icon image URL
-                alt="Profile"
-                className="w-8 h-8 rounded-full"
-              />
-            </div>
-          </div>
-        )}
-      </header>
+      
 
       {/* Hero Section */}
       <section className="text-center py-20 bg-gradient-to-r from-blue-100 to-blue-50">

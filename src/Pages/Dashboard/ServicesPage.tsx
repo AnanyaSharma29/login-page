@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 const ServicesPage: React.FC = () => {
   return (
     <div className="font-sans bg-gray-50">
-      {/* Header */}
+      {/* Header
       <header className="flex justify-between items-center p-6 bg-white shadow-md">
         <div className="text-2xl font-bold text-blue-700">Our Services</div>
         <nav className="space-x-4">
@@ -13,7 +13,7 @@ const ServicesPage: React.FC = () => {
           <Link to="/services" className="text-gray-700 hover:text-blue-700">Services</Link>
           <Link to="/contact" className="text-gray-700 hover:text-blue-700">Contact Us</Link>
         </nav>
-      </header>
+      </header> */}
 
       {/* Services Section */}
       <section className="py-20">
