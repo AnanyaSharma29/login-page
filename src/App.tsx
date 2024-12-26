@@ -29,11 +29,11 @@ import Clients from './Pages/Consultant/Clients';
 import Availability from './Pages/Consultant/Availability';
 import Request from './Pages/Consultant/Request';
 import Settings from './Pages/Consultant/Settings';
-import BookingPage from './Pages/Dashboard/BookingPage';
-import AllRequestsPage from './Pages/Consultant/AllRequestsPage';
 function App() {
   return (
     <Router>
+            <div>
+            <MusicPlayer /> {/* MusicPlayer added globally */}
       <Routes>
         {/* General Routes */}
         <Route path="/" element={<HomePage />} />
@@ -81,6 +81,7 @@ function App() {
         
 
       </Routes>
+      </div>
     </Router>
   );
 }
