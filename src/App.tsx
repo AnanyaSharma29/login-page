@@ -29,6 +29,9 @@ import Clients from './Pages/Consultant/Clients';
 import Availability from './Pages/Consultant/Availability';
 import Request from './Pages/Consultant/Request';
 import Settings from './Pages/Consultant/Settings';
+import BookingPage from './Pages/Dashboard/BookingPage';
+import AllRequestsPage from './Pages/Consultant/AllRequestsPage';
+import MusicPlayer from './Pages/components/MusicPlayer';
 function App() {
   return (
     <Router>
