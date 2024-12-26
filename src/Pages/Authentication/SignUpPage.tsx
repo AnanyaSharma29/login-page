@@ -38,7 +38,7 @@ const SignupPage: React.FC = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:8080/auth/register', formData);
+      const response = await axios.post('http://localhost:8080/auth/register/user', formData);
       alert('Registration successful!');
       navigate('/dashboard');
     } catch (error) {
