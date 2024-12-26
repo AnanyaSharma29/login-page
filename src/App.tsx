@@ -6,6 +6,7 @@ import SignUpPage from './Pages/Authentication/SignUpPage';
 import Dashboard from './Pages/Dashboard/DashBoard';
 import ProfilePage from './Pages/Dashboard/ProfilePage';
 import ContactUs from './Pages/Dashboard/ContactUS';
+import BlogPage from './Pages/Dashboard/BlogPage';
 import AboutUs from './Pages/Dashboard/AboutUs';
 import ServicesPage from './Pages/Dashboard/ServicesPage';
 import ServiceDailyTask from './Pages/Dashboard/ServiceDailyTask';
@@ -26,12 +27,13 @@ import MoodTrackingForm from './Pages/Dashboard/MoodTrackingForm';
 import Calendar from './Pages/Consultant/Calendar';
 import Clients from './Pages/Consultant/Clients';
 import Availability from './Pages/Consultant/Availability';
-import Messages from './Pages/Consultant/Messages';
+import Request from './Pages/Consultant/Request';
 import Settings from './Pages/Consultant/Settings';
+import BookingPage from './Pages/Dashboard/BookingPage';
+import AllRequestsPage from './Pages/Consultant/AllRequestsPage';
 import MusicPlayer from './Pages/components/MusicPlayer';
 import ExerciseTasksPage from './Pages/Dashboard/ExerciseTasksPage';
 import Header from './Pages/components/Header'; // Header Component
-
 function App() {
   const location = useLocation();
 
@@ -60,12 +62,15 @@ function App() {
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/contact" element={<ContactUs />} />
         <Route path="/about" element={<AboutUs />} />
+        <Route path="/blog" element={<BlogPage />} />
+
 
         {/* Dashboard Routes */}
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/user-dashboard" element={<Dashboard />} />
         <Route path="/consultant-dashboard" element={<ConsultantDashboard />} />
         <Route path="/book-appointment" element={<BookAppointment />} />
+        <Route path="/booking/:consultantId" element={<BookingPage />} />
         <Route path="/article-1" element={<Article1 />} />
         <Route path="/article-2" element={<Article2 />} />
         <Route path="/article-3" element={<Article3 />} />
@@ -93,7 +98,8 @@ function App() {
         <Route path="/calendar" element={<Calendar />} />
         <Route path="/clients" element={<Clients />} />
         <Route path="/availability" element={<Availability />} />
-        <Route path="/messages" element={<Messages />} />
+        <Route path="/request" element={<Request />} />
+            <Route path="/all-requests" element={<AllRequestsPage />} />
         <Route path="/settings" element={<Settings />} />
       </Routes>
     </div>
