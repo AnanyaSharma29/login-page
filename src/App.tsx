@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import HomePage from './Pages/Dashboard/HomePage';
+import BlogListPage from './Pages/Dashboard/BlogListPage'; 
 import LoginPage from './Pages/Authentication/LoginPage';
 import SignUpPage from './Pages/Authentication/SignUpPage';
 import Dashboard from './Pages/Dashboard/DashBoard';
@@ -58,6 +59,7 @@ function App() {
       <Routes>
         {/* General Routes */}
         <Route path="/" element={<HomePage />} />
+        <Route path="/blogs" element={<BlogListPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/contact" element={<ContactUs />} />

@@ -1,12 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-
 
 const HomePage: React.FC = () => {
   return (
     <div className="font-sans bg-gray-50">
-      
-
       {/* Hero Section */}
       <section className="text-center py-20 bg-gradient-to-r from-blue-100 to-blue-50">
         <h1 className="text-5xl font-bold mb-4 text-blue-800">
@@ -47,30 +44,36 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* Why Choose Us Section */}
-      <section className="py-20">
-        <h2 className="text-center text-3xl font-bold mb-12 text-blue-800">
-          Why Our Mental Health Consultants are the Best Choice
+      {/* Inspiring Blogs Section */}
+      <section className="py-20 bg-gradient-to-r from-yellow-100 to-orange-50">
+        <h2 className="text-center text-3xl font-bold mb-6 text-orange-600">
+          🌟 Get Inspired by Some of Our People 🌟
         </h2>
-        <div className="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="text-center bg-white shadow-lg p-6 rounded-lg">
-            <div className="text-2xl font-bold mb-4 text-blue-800">Holistic Approach</div>
-            <p className="text-gray-600">
-              We address mental wellbeing from multiple perspectives for balanced outcomes.
-            </p>
+        <p className="text-center text-lg mb-8 text-gray-600">
+          ✨ Dive into uplifting stories and powerful experiences shared by individuals who have overcome challenges and transformed their lives. ✨
+        </p>
+        <div className="flex justify-around mb-8">
+          {/* Image 1 */}
+          <div className="w-full max-w-xs">
+            <img
+              src="blogpic1.jpg"
+              alt="Inspiring Blog 1"
+              className="w-full h-auto max-h-72 object-cover rounded-lg shadow-lg"
+            />
           </div>
-          <div className="text-center bg-green-500 text-white p-6 rounded-lg">
-            <div className="text-2xl font-bold mb-4">Expertise Team</div>
-            <p>
-              Our team includes leading professionals in the field of mental health.
-            </p>
+          {/* Image 2 */}
+          <div className="w-full max-w-xs">
+            <img
+              src="blogpic2.jpg"
+              alt="Inspiring Blog 2"
+              className="w-full h-auto max-h-72 object-cover rounded-lg shadow-lg"
+            />
           </div>
-          <div className="text-center bg-white shadow-lg p-6 rounded-lg">
-            <div className="text-2xl font-bold mb-4 text-blue-800">Accessibility</div>
-            <p className="text-gray-600">
-              Our services are designed to be accessible to everyone, everywhere.
-            </p>
-          </div>
+        </div>
+        <div className="text-center">
+          <Link to="/blogs" className="bg-orange-600 text-white px-8 py-5 text-xl rounded-lg shadow-lg hover:bg-orange-700">
+            Explore Blogs 📝
+          </Link>
         </div>
       </section>
 
