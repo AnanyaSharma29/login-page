@@ -49,8 +49,9 @@ const LoginPage: React.FC = () => {
         password: formData.password,
       });
 
-      // Store email in localStorage
-      localStorage.setItem(`${formData.role}Email`, formData.email);
+      // Store email and role in localStorage
+      localStorage.setItem(`${formData.role}Email`, formData.email); // Store email with the role as the key
+      localStorage.setItem('role', formData.role); // Store role
 
       // Navigate based on the role
       if (formData.role === 'user') {
@@ -114,7 +115,12 @@ const LoginPage: React.FC = () => {
             </button>
             <div className="flex justify-between mt-4 text-sm text-gray-600">
               <a href="#" className="hover:text-indigo-500">Forgot Password?</a>
-              <a href="/signup" className="hover:text-indigo-500">Sign Up</a>
+              <a
+                href={formData.role === 'consultant' ? '/consultant-signup' : '/signup'}
+                className="hover:text-indigo-500"
+              >
+                Sign Up
+              </a>
             </div>
           </div>
         </form>

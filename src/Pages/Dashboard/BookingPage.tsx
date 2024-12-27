@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useParams, useNavigate } from "react-router-dom"; // useNavigate instead of useHistory
 import axios from "axios";
 
 interface Consultant {
@@ -13,7 +13,6 @@ interface Consultant {
 }
 
 interface Appointment {
-  
   date: string;
   time: string;
   status: string;
@@ -22,13 +21,20 @@ interface Appointment {
 const BookingPage: React.FC = () => {
   const { consultantId } = useParams();
   const location = useLocation();
-  const { consultant } = location.state as { consultant: Consultant }; // Get consultant from state
+  const navigate = useNavigate(); // Use navigate instead of history
+
+  // Check if consultant data exists in location.state
+  const consultant = location.state?.consultant;
+
+  if (!consultant) {
+    // Redirect to another page or show an error if consultant data is missing
+    navigate("/error"); // Redirect to an error page or another fallback page
+  }
 
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [selectedTime, setSelectedTime] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
-  const [bookingStatus, setBookingStatus] = useState<Appointment | null>(null);
-
+  const [bookingStatus, setBookingStatus] = useState<Appointment[]>([]); // Array of appointments
   const [userName, setUserName] = useState<string>(""); // User name input field
   const [userEmail, setUserEmail] = useState<string>(""); // Email fetched from localStorage
 
@@ -45,16 +51,29 @@ const BookingPage: React.FC = () => {
   // Fetch user's booking status on mount
   useEffect(() => {
     if (userEmail) {
+      fetchBookingStatus();
+    }
+  }, [userEmail]); // Run only when userEmail is set
+
+  // Fetch booking status from the backend
+  const fetchBookingStatus = () => {
+    if (userEmail) {
       axios
         .get(`http://localhost:8080/appointments/status?email=${userEmail}`)
         .then((response) => {
-          setBookingStatus(response.data); // Set status from the backend
+          // Sort the appointments in descending order by date and time
+          const sortedAppointments = response.data.sort((a: Appointment, b: Appointment) => {
+            const dateA = new Date(`${a.date}T${a.time}`);
+            const dateB = new Date(`${b.date}T${b.time}`);
+            return dateB.getTime() - dateA.getTime(); // Most recent first
+          });
+          setBookingStatus(sortedAppointments);
         })
         .catch((error) => {
           console.error("Error fetching booking status:", error);
         });
     }
-  }, [userEmail]);
+  };
 
   // Convert time to 24-hour format
   const convertTo24HourFormat = (time: string): string => {
@@ -75,6 +94,11 @@ const BookingPage: React.FC = () => {
 
   // Handle booking logic
   const handleBooking = () => {
+    if (!selectedDate || new Date(selectedDate) <= new Date()) {
+      alert("Please select a valid future date for booking.");
+      return;
+    }
+
     if (consultant && selectedDate && selectedTime && userName) {
       setIsLoading(true);
       const timeIn24HourFormat = convertTo24HourFormat(selectedTime);
@@ -85,14 +109,21 @@ const BookingPage: React.FC = () => {
         userEmail: userEmail, // Send user email from localStorage
         date: selectedDate,
         time: timeIn24HourFormat,
-        status: "PENDING",
+        status: "PENDING", // Set initial status as "PENDING"
       };
 
       axios
         .post("http://localhost:8080/appointments/book", bookingData)
         .then((response) => {
           alert("Appointment Confirmed!");
-          setBookingStatus({ date: selectedDate, time: selectedTime, status: "PENDING" });
+
+          // Reset form state after booking
+          setSelectedDate("");
+          setSelectedTime("");
+          setUserName(""); // Clear the user name input
+
+          // Refetch booking status to ensure the latest status
+          fetchBookingStatus();
         })
         .catch((error) => {
           console.error("Error booking appointment:", error);
@@ -109,42 +140,44 @@ const BookingPage: React.FC = () => {
   return (
     <div className="p-8 font-sans bg-gray-50 min-h-screen">
       <h1 className="text-4xl font-bold text-center text-green-500 mb-8">
-        Book an Appointment with {consultant.firstname} {consultant.lastname}
+        Book an Appointment with {consultant?.firstname} {consultant?.lastname}
       </h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Appointment Status Section */}
         <div className="bg-white p-6 rounded-lg shadow-lg border-t-4 border-green-500">
           <h2 className="text-2xl font-semibold text-center text-gray-700 mb-4">Appointment Status</h2>
-          {bookingStatus ? (
-            <div className="text-center text-gray-600">
-              <div className="flex flex-col items-center space-y-2">
-                <div className="flex items-center space-x-2">
-                  <span className="font-semibold text-gray-800">Date:</span>
-                  <p>{bookingStatus.date}</p>
+          {bookingStatus && bookingStatus.length > 0 ? (
+            <div className="space-y-4 max-h-96 overflow-y-auto"> {/* Set max height and enable scrolling */}
+              {bookingStatus.map((appointment, index) => (
+                <div key={index} className="p-4 bg-gray-100 rounded-md shadow-md">
+                  <div className="flex items-center justify-between">
+                    <span className="font-semibold text-gray-800">Date:</span>
+                    <p>{appointment.date}</p>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="font-semibold text-gray-800">Time:</span>
+                    <p>{appointment.time}</p>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="font-semibold text-gray-800">Status:</span>
+                    <span
+                      className={`${
+                        appointment.status === "PENDING"
+                          ? "text-yellow-500"
+                          : appointment.status === "CONFIRMED"
+                          ? "text-green-500"
+                          : "text-red-500"
+                      }`}
+                    >
+                      {appointment.status}
+                    </span>
+                  </div>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <span className="font-semibold text-gray-800">Time:</span>
-                  <p>{bookingStatus.time}</p>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <span className="font-semibold text-gray-800">Status:</span>
-                  <span
-                    className={`${
-                      bookingStatus.status === "PENDING"
-                        ? "text-yellow-500"
-                        : bookingStatus.status === "CONFIRMED"
-                        ? "text-green-500"
-                        : "text-red-500"
-                    }`}
-                  >
-                    {bookingStatus.status}
-                  </span>
-                </div>
-              </div>
+              ))}
             </div>
           ) : (
-            <p className="text-center text-gray-600">No booking found</p>
+            <p className="text-center text-gray-600">No bookings found.</p>
           )}
         </div>
 
@@ -195,7 +228,9 @@ const BookingPage: React.FC = () => {
 
           <button
             onClick={handleBooking}
-            className={`w-full mt-6 py-2 rounded-md transition-colors ${isLoading ? "bg-gray-400 cursor-not-allowed" : "bg-green-500 hover:bg-green-600"} text-white`}
+            className={`w-full mt-6 py-2 rounded-md transition-colors ${
+              isLoading ? "bg-gray-400 cursor-not-allowed" : "bg-green-500 hover:bg-green-600"
+            } text-white`}
             disabled={isLoading}
           >
             {isLoading ? "Booking..." : "Confirm Appointment"}

@@ -40,7 +40,6 @@ const ConsultantDashboard: React.FC = () => {
       axios
         .get(`http://localhost:8080/appointments/pending/${email}`)
         .then((response) => {
-          // Ensure response data is an array, even if empty
           setRequests(Array.isArray(response.data) ? response.data : []);
         })
         .catch((error) => console.error("Error fetching appointment requests:", error));
@@ -75,34 +74,64 @@ const ConsultantDashboard: React.FC = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-100 font-sans">
+    <div className="flex min-h-screen bg-gradient-to-r from-teal-100 to-blue-50 font-sans">
       <Sidebar onLogout={handleLogout} />
       <main className="flex-1 p-8">
         {consultant ? (
           <>
-            <h2 className="text-3xl font-bold text-gray-800">
-              Welcome, {consultant.firstname} {consultant.lastname}
-            </h2>
-            <p className="text-gray-600">Here’s what’s happening today:</p>
+            <div className="text-center mb-8">
+              <h2 className="text-4xl font-extrabold text-teal-600">
+                Welcome, {consultant.firstname} {consultant.lastname}
+              </h2>
+              <p className="text-lg text-gray-600 mt-2">Here’s what’s happening today:</p>
+            </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-              {/* Appointment Calendar */}
-              <div className="bg-white p-6 rounded-lg shadow-md">
-                <h3 className="text-xl font-semibold text-teal-600 mb-4">Details</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
+              {/* Consultant Profile Card */}
+              <div className="bg-white p-6 rounded-xl shadow-xl border-t-4 border-teal-500">
+                <h3 className="text-2xl font-semibold text-teal-600 mb-4">Consultant Details</h3>
                 <ProfileCard consultant={consultant} />
               </div>
 
               {/* View All Appointments */}
-              <div className="bg-white p-6 rounded-lg shadow-md">
-                <h3 className="text-xl font-semibold text-teal-600 mb-4">View All Appointments</h3>
+              <div className="bg-white p-6 rounded-xl shadow-xl border-t-4 border-teal-500">
+                <h3 className="text-2xl font-semibold text-teal-600 mb-4">Appointments</h3>
                 {requests.length > 0 ? (
                   <ul className="space-y-4">
-                    {limitedRequests.map((appointment: AppointmentRequest) => (
-                      <li key={appointment.userId} className="border-b pb-2">
-                        <p className="font-semibold text-gray-800">{appointment.userName}</p>
-                        <p className="text-sm text-gray-600">
-                          Date: {appointment.date}, Time: {appointment.time}
-                        </p>
+                    {limitedRequests.map((appointment) => (
+                      <li key={appointment.userId} className="border-b pb-4">
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <p className="font-semibold text-lg text-gray-800">{appointment.userName}</p>
+                            <p className="text-sm text-gray-600">
+                              Date: {appointment.date}, Time: {appointment.time}
+                            </p>
+                          </div>
+                          <div className="flex items-center space-x-4">
+                            {appointment.status === "PENDING" && (
+                              <>
+                                <button
+                                  className="bg-teal-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-teal-600 transition"
+                                  onClick={() => handleRequestAction(appointment.userId, "ACCEPTED")}
+                                >
+                                  Accept
+                                </button>
+                                <button
+                                  className="bg-red-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-red-600 transition"
+                                  onClick={() => handleRequestAction(appointment.userId, "REJECTED")}
+                                >
+                                  Reject
+                                </button>
+                              </>
+                            )}
+                            {appointment.status === "ACCEPTED" && (
+                              <span className="text-green-500 font-semibold">Accepted</span>
+                            )}
+                            {appointment.status === "REJECTED" && (
+                              <span className="text-red-500 font-semibold">Rejected</span>
+                            )}
+                          </div>
+                        </div>
                       </li>
                     ))}
                   </ul>
@@ -111,7 +140,7 @@ const ConsultantDashboard: React.FC = () => {
                 )}
                 {requests.length > 3 && (
                   <button
-                    className="text-teal-500 mt-4"
+                    className="text-teal-600 mt-4 hover:underline"
                     onClick={handleShowAllRequests}
                   >
                     Show All
@@ -121,40 +150,44 @@ const ConsultantDashboard: React.FC = () => {
             </div>
 
             {/* Requests Section */}
-            <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="bg-white p-6 rounded-lg shadow-md">
-                <h3 className="text-xl font-semibold text-teal-600 mb-4">Requests</h3>
+            <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div className="bg-white p-6 rounded-xl shadow-xl border-t-4 border-teal-500">
+                <h3 className="text-2xl font-semibold text-teal-600 mb-4">Pending Requests</h3>
                 {limitedRequests.length > 0 ? (
                   <ul className="space-y-4">
-                    {limitedRequests.map((request: AppointmentRequest) => (
-                      <li key={request.userId} className="border-b pb-2">
-                        <p className="font-semibold text-gray-800">{request.userName}</p>
-                        <p className="text-sm text-gray-600">
-                          Date: {request.date}, Time: {request.time}
-                        </p>
-                        <div className="flex space-x-4 mt-2">
-                          {request.status === "PENDING" && (
-                            <>
-                              <button
-                                className="bg-teal-500 text-white py-1 px-3 rounded-lg hover:bg-teal-600"
-                                onClick={() => handleRequestAction(request.userId, "ACCEPTED")}
-                              >
-                                Accept
-                              </button>
-                              <button
-                                className="bg-red-500 text-white py-1 px-3 rounded-lg hover:bg-red-600"
-                                onClick={() => handleRequestAction(request.userId, "REJECTED")}
-                              >
-                                Reject
-                              </button>
-                            </>
-                          )}
-                          {request.status === "ACCEPTED" && (
-                            <span className="text-green-500 font-semibold">Accepted</span>
-                          )}
-                          {request.status === "REJECTED" && (
-                            <span className="text-red-500 font-semibold">Rejected</span>
-                          )}
+                    {limitedRequests.map((request) => (
+                      <li key={request.userId} className="border-b pb-4">
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <p className="font-semibold text-lg text-gray-800">{request.userName}</p>
+                            <p className="text-sm text-gray-600">
+                              Date: {request.date}, Time: {request.time}
+                            </p>
+                          </div>
+                          <div className="flex items-center space-x-4">
+                            {request.status === "PENDING" && (
+                              <>
+                                <button
+                                  className="bg-teal-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-teal-600 transition"
+                                  onClick={() => handleRequestAction(request.userId, "ACCEPTED")}
+                                >
+                                  Accept
+                                </button>
+                                <button
+                                  className="bg-red-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-red-600 transition"
+                                  onClick={() => handleRequestAction(request.userId, "REJECTED")}
+                                >
+                                  Reject
+                                </button>
+                              </>
+                            )}
+                            {request.status === "ACCEPTED" && (
+                              <span className="text-green-500 font-semibold">Accepted</span>
+                            )}
+                            {request.status === "REJECTED" && (
+                              <span className="text-red-500 font-semibold">Rejected</span>
+                            )}
+                          </div>
                         </div>
                       </li>
                     ))}

@@ -9,6 +9,17 @@ interface Contact {
 }
 
 const EmergencyContact: React.FC = () => {
+    // Get the role and email from localStorage based on the role
+    const role = localStorage.getItem('role'); // Assuming you store the role
+    const userEmail = role === 'user' ? localStorage.getItem('userEmail') : localStorage.getItem('consultantEmail');
+
+    // Redirect to login if no email is available
+    useEffect(() => {
+        if (!userEmail) {
+            window.location.href = '/login';
+        }
+    }, [userEmail]);
+
     const [contacts, setContacts] = useState<Contact[]>([]);
     const [formData, setFormData] = useState<Contact>({
         name: '',
@@ -20,16 +31,23 @@ const EmergencyContact: React.FC = () => {
 
     useEffect(() => {
         const fetchContacts = async () => {
-            try {
-                const response = await axios.get('http://localhost:8080/api/emergency-contacts');
-                setContacts(response.data);
-            } catch (error) {
-                console.error('Error fetching contacts:', error);
+            if (userEmail) {
+                try {
+                    const response = await axios.get(`http://localhost:8080/api/emergency-contacts/${userEmail}`);
+                    // Ensure response is an array before setting it
+                    if (Array.isArray(response.data)) {
+                        setContacts(response.data);
+                    } else {
+                        console.error('Expected an array, received:', response.data);
+                    }
+                } catch (error) {
+                    console.error('Error fetching contacts:', error);
+                }
             }
         };
 
         fetchContacts();
-    }, []);
+    }, [userEmail]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -44,17 +62,19 @@ const EmergencyContact: React.FC = () => {
         }
 
         try {
-            const response = await axios.post('http://localhost:8080/api/emergency-contacts', formData);
-            setContacts([...contacts, response.data]);
-            setFormData({ name: '', contactNumber: '', email: '' });
-            setMessage('Contact added successfully!');
-            setMessageType('success');
+            if (userEmail) {
+                const response = await axios.post(`http://localhost:8080/api/emergency-contacts/${userEmail}`, formData);
+                setContacts([...contacts, response.data]);
+                setFormData({ name: '', contactNumber: '', email: '' });
+                setMessage('Contact added successfully!');
+                setMessageType('success');
 
-            // Hide the message after 2 seconds
-            setTimeout(() => {
-                setMessage('');
-                setMessageType('');
-            }, 2000);
+                // Hide the message after 2 seconds
+                setTimeout(() => {
+                    setMessage('');
+                    setMessageType('');
+                }, 2000);
+            }
         } catch (error) {
             console.error('Error adding contact:', error);
             setMessage('Failed to add contact. Please try again.');
@@ -69,10 +89,10 @@ const EmergencyContact: React.FC = () => {
     };
 
     const handleDeleteContact = async (id?: string) => {
-        if (!id) return;
+        if (!id || !userEmail) return;
 
         try {
-            await axios.delete(`http://localhost:8080/api/emergency-contacts/${id}`);
+            await axios.delete(`http://localhost:8080/api/emergency-contacts/${userEmail}/${id}`);
             setContacts(contacts.filter(contact => contact.id !== id));
             setMessage('Contact deleted successfully!');
             setMessageType('success');
@@ -156,29 +176,29 @@ const EmergencyContact: React.FC = () => {
             <div>
                 <h3 className="text-2xl font-semibold text-gray-700 mb-5 text-center">Emergency Contacts List</h3>
                 <ul className="space-y-6">
-                    {contacts.map(contact => (
-                        <li
-                            key={contact.id}
-                            className="p-5 bg-white border border-gray-300 rounded-lg shadow-sm flex justify-between items-center"
-                        >
-                            <div>
-                                <p className="text-lg font-semibold text-gray-800">{contact.name}</p>
-                                <p className="text-gray-600">📞 {contact.contactNumber}</p>
-                                <p className="text-gray-600">✉️ {contact.email}</p>
-                            </div>
-                            <button
-                                onClick={() => handleDeleteContact(contact.id)}
-                                className="ml-5 text-red-600 hover:text-red-800 transition duration-200"
+                    {contacts.length > 0 ? (
+                        contacts.map(contact => (
+                            <li
+                                key={contact.id}
+                                className="p-5 bg-white border border-gray-300 rounded-lg shadow-sm flex justify-between items-center"
                             >
-                                Delete
-                            </button>
-                        </li>
-                    ))}
+                                <div>
+                                    <p className="text-lg font-semibold text-gray-800">{contact.name}</p>
+                                    <p className="text-gray-600">📞 {contact.contactNumber}</p>
+                                    <p className="text-gray-600">✉️ {contact.email}</p>
+                                </div>
+                                <button
+                                    onClick={() => handleDeleteContact(contact.id)}
+                                    className="ml-5 text-red-600 hover:text-red-800 transition duration-200"
+                                >
+                                    Delete
+                                </button>
+                            </li>
+                        ))
+                    ) : (
+                        <p className="text-gray-500 text-center mt-6">No emergency contacts added yet.</p>
+                    )}
                 </ul>
-
-                {contacts.length === 0 && (
-                    <p className="text-gray-500 text-center mt-6">No emergency contacts added yet.</p>
-                )}
             </div>
         </div>
     );
