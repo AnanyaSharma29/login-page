@@ -4,6 +4,7 @@ import HomePagepublic from './Pages/PublicPages/HomePagepublic';
 import ServicesPagepublic from './Pages/PublicPages/ServicesPagepublic';
 
 import HomePage from './Pages/Dashboard/HomePage';
+import BlogListPage from './Pages/Dashboard/BlogListPage'; 
 import LoginPage from './Pages/Authentication/LoginPage';
 import SignUpPage from './Pages/Authentication/SignUpPage';
 import Dashboard from './Pages/Dashboard/DashBoard';
@@ -35,7 +36,7 @@ import Settings from './Pages/Consultant/Settings';
 import BookingPage from './Pages/Dashboard/BookingPage';
 import AllRequestsPage from './Pages/Consultant/AllRequestsPage';
 import MusicPlayer from './Pages/components/MusicPlayer';
-import ExerciseTasksPage from './Pages/Dashboard/ExerciseTasksPage';// Header Component
+import ExerciseTasksPage from './Pages/Dashboard/ExerciseTasksPage';
 import PublicHeader from './Pages/PublicPages/PublicHeader';
 import AboutUspublic from './Pages/PublicPages/AboutUspublic';
 import ContactUspublic from './Pages/PublicPages/ContactUSpublic';
@@ -125,6 +126,7 @@ const App: React.FC = () => {
         <Route path="/services-public" element={<ServicesPagepublic />} />
         <Route path="/about-public" element={<AboutUspublic />} />
         <Route path="/contact-public" element={<ContactUspublic />} />
+        <Route path="/blogs" element={<BlogListPage />} />
 
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignUpPage />} />

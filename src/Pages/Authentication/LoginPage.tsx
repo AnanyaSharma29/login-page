@@ -49,8 +49,9 @@ const LoginPage: React.FC = () => {
         password: formData.password,
       });
 
-      // Store email in localStorage
-      localStorage.setItem(`${formData.role}Email`, formData.email);
+      // Store email and role in localStorage
+      localStorage.setItem(`${formData.role}Email`, formData.email); // Store email with the role as the key
+      localStorage.setItem('role', formData.role); // Store role
 
       // Navigate based on the role
       if (formData.role === 'user') {

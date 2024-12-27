@@ -10,12 +10,17 @@ const Dashboard: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check if the user is already logged in (you could also check token/session here)
-    const userToken = localStorage.getItem('userToken');
-    if (userToken) {
-      setIsLoggedIn(true);
+    // Check if the user is logged in by verifying email and role in localStorage
+    const userEmail = localStorage.getItem('userEmail');
+    const userRole = localStorage.getItem('role');
+    
+    if (!userEmail || !userRole) {
+      setIsLoggedIn(false); // If no email or role, set user as not logged in
+      navigate('/'); // Redirect to the login page
+    } else {
+      setIsLoggedIn(true); // User is logged in
     }
-
+  
     // Get the user's location
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -29,19 +34,17 @@ const Dashboard: React.FC = () => {
         { timeout: 5000 }
       );
     }
-  }, []);
+  }, [navigate]);
+  
 
   const handleLoginClick = () => {
-    if (isLoggedIn) {
-      // Clear session or token on logout
-      localStorage.removeItem('userToken');
-      setIsLoggedIn(false);
-      navigate('/');
-    } else {
-      navigate('/');
-    }
+    // Clear email and role from localStorage on logout
+    localStorage.removeItem('userEmail');
+    localStorage.removeItem('role');
+    setIsLoggedIn(false);
+    navigate('/');
   };
-
+  
   const handleSosAlert = async () => {
     if (!location) {
       alert('Unable to get your location. Please try again later.');
