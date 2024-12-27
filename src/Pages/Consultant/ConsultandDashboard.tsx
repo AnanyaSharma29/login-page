@@ -51,7 +51,7 @@ const ConsultantDashboard: React.FC = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("consultantEmail");
-    window.location.href = "/login-page";
+    window.location.href = "/login";
   };
 
   const handleRequestAction = (userId: string, action: "ACCEPTED" | "REJECTED") => {

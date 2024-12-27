@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-
 interface Blog {
   id: number;
   title: string;
@@ -35,6 +34,7 @@ const BlogPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-500 via-indigo-600 to-purple-700 text-white font-sans">
+
       <div className="max-w-4xl mx-auto py-8 px-4">
         <h1 className="text-3xl font-bold mb-6">Write Your Blog</h1>
         <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-lg">

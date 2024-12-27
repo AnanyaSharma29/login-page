@@ -1,5 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
+import HomePagepublic from './Pages/PublicPages/HomePagepublic';
+import ServicesPagepublic from './Pages/PublicPages/ServicesPagepublic';
+
 import HomePage from './Pages/Dashboard/HomePage';
 import LoginPage from './Pages/Authentication/LoginPage';
 import SignUpPage from './Pages/Authentication/SignUpPage';
@@ -32,38 +35,105 @@ import Settings from './Pages/Consultant/Settings';
 import BookingPage from './Pages/Dashboard/BookingPage';
 import AllRequestsPage from './Pages/Consultant/AllRequestsPage';
 import MusicPlayer from './Pages/components/MusicPlayer';
-import ExerciseTasksPage from './Pages/Dashboard/ExerciseTasksPage';
-import Header from './Pages/components/Header'; // Header Component
-function App() {
+import ExerciseTasksPage from './Pages/Dashboard/ExerciseTasksPage';// Header Component
+import PublicHeader from './Pages/PublicPages/PublicHeader';
+import AboutUspublic from './Pages/PublicPages/AboutUspublic';
+import ContactUspublic from './Pages/PublicPages/ContactUSpublic';
+import UserHeader from './Pages/components/UserHeader'; //  UserHeader Component
+
+const App: React.FC = () => {
   const location = useLocation();
 
-  // Define the routes where Header should not be displayed
-  const noHeaderRoutes = [
-    '/consultant-login',
-    '/consultant-dashboard',
-    '/user-dashboard',
-  ];
+   // Define the routes where the header should not be shown
+   const noHeaderRoutes = ['/user-dashboard', '/consultant-dashboard'];
 
-  // Determine if Header should be displayed
-  const showHeader = !noHeaderRoutes.includes(location.pathname);
-
-  return (
-    <div>
-      {/* Render Header conditionally */}
-      {showHeader && <Header />}
-
-      {/* MusicPlayer added globally */}
-      <MusicPlayer />
-
+   // Determine if the current path is in the noHeaderRoutes list
+   const shouldShowHeader = !noHeaderRoutes.includes(location.pathname);
+ 
+   // Condition to render PublicHeader for public pages
+   const isPublicPage = [
+     '/', '/services-public', '/about-public', '/contact-public', '/login', '/signup'
+   ].includes(location.pathname);
+ 
+   let headerTitle = 'MindCare'; // Default title
+   let navLinks = [
+     { to: '/user-dashboard', label: 'Dashboard' },
+     { to: '/services', label: 'Services' },
+     { to: '/blog', label: 'Blog' },
+     { to: '/about', label: 'About' },
+     { to: '/contact', label: 'Contact' }
+   ];
+ 
+   // Adjust header for dashboard home page
+   if (location.pathname === '/dashboard-home') {
+     headerTitle = 'MindCare Home';
+     navLinks = [
+       { to: '/user-dashboard', label: 'Dashboard' },
+       { to: '/services', label: 'Services' },
+       { to: '/blog', label: 'Blog' },
+       { to: '/about', label: 'About' },
+       { to: '/contact', label: 'Contact' }
+     ];
+   }
+ 
+   // Adjust header for service page
+   if (location.pathname === '/services') {
+     headerTitle = 'MindCare Services';
+     navLinks = [
+       { to: '/dashboard-home', label: 'Home' },
+       { to: '/user-dashboard', label: 'Dashboard' },
+       { to: '/blog', label: 'Blog' },
+       { to: '/about', label: 'About' },
+       { to: '/contact', label: 'Contact' }
+     ];
+   }
+ 
+   // Adjust for other pages as needed
+   if (['/about', '/contact'].includes(location.pathname)) {
+     navLinks = [
+       { to: '/user-dashboard', label: 'Dashboard' },
+       { to: '/services', label: 'Services' },
+       { to: '/blog', label: 'Blog' },
+       { to: '/about', label: 'About' },
+       { to: '/contact', label: 'Contact' }
+     ];
+   }
+ 
+   // Logout handler
+   const handleLogout = () => {
+     // Redirect to the public homepage
+     window.location.href = '/';
+   };
+ 
+   return (
+     <div>
+       {/* MusicPlayer added globally */}
+       <MusicPlayer />
+ 
+       {/* Conditionally render the PublicHeader on public pages or exclude the UserHeader on specific pages */}
+       {isPublicPage ? (
+         <PublicHeader />
+       ) : (
+         shouldShowHeader && (
+           <UserHeader title={headerTitle} navLinks={navLinks} onLogout={handleLogout} />
+         )
+       )}
       <Routes>
         {/* General Routes */}
-        <Route path="/" element={<HomePage />} />
+        {/* Public Page as the default */}
+        <Route path="/" element={<HomePagepublic />} />
+        <Route path="/services-public" element={<ServicesPagepublic />} />
+        <Route path="/about-public" element={<AboutUspublic />} />
+        <Route path="/contact-public" element={<ContactUspublic />} />
+
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/contact" element={<ContactUs />} />
         <Route path="/about" element={<AboutUs />} />
         <Route path="/blog" element={<BlogPage />} />
 
+        {/* HomePage for logged-in users */}
+        <Route path="/dashboard-home" element={<HomePage />} />
 
         {/* Dashboard Routes */}
         <Route path="/dashboard" element={<Dashboard />} />
@@ -99,7 +169,7 @@ function App() {
         <Route path="/clients" element={<Clients />} />
         <Route path="/availability" element={<Availability />} />
         <Route path="/request" element={<Request />} />
-            <Route path="/all-requests" element={<AllRequestsPage />} />
+        <Route path="/all-requests" element={<AllRequestsPage />} />
         <Route path="/settings" element={<Settings />} />
       </Routes>
     </div>

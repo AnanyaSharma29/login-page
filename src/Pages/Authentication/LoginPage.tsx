@@ -114,7 +114,12 @@ const LoginPage: React.FC = () => {
             </button>
             <div className="flex justify-between mt-4 text-sm text-gray-600">
               <a href="#" className="hover:text-indigo-500">Forgot Password?</a>
-              <a href="/signup" className="hover:text-indigo-500">Sign Up</a>
+              <a
+                href={formData.role === 'consultant' ? '/consultant-signup' : '/signup'}
+                className="hover:text-indigo-500"
+              >
+                Sign Up
+              </a>
             </div>
           </div>
         </form>

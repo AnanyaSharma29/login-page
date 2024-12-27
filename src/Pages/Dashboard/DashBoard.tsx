@@ -68,9 +68,10 @@ const Dashboard: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-r from-blue-500 via-indigo-600 to-purple-700 text-white font-sans">
       <header className="bg-white shadow-lg dark:bg-gray-800 dark:text-white">
         <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center relative">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Emergency and Mental Wellbeing Dashboard</h1>
+          <h1 className="text-3xl font-bold text-white-900 hover:text-yellow-400">MindCare Dashboard</h1>
           <nav>
   <ul className="flex space-x-6">
+  <li><Link to="/dashboard-home" className="text-gray-900 hover:text-blue-500 dark:text-white dark:hover:text-blue-300">Home</Link></li>
     <li><Link to="/services" className="text-gray-900 hover:text-blue-500 dark:text-white dark:hover:text-blue-300">Services</Link></li>
     <li><Link to="/blog" className="text-gray-900 hover:text-blue-500 dark:text-white dark:hover:text-blue-300">Blog</Link></li>
     <li><Link to="/about" className="text-gray-900 hover:text-blue-500 dark:text-white dark:hover:text-blue-300">About</Link></li>

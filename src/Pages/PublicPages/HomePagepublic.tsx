@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+
 
 const HomePage: React.FC = () => {
   return (
     <div className="font-sans bg-gray-50">
-
       
 
       {/* Hero Section */}
