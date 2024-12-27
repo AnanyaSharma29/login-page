@@ -1,18 +1,12 @@
 import React from 'react';
-<<<<<<< HEAD
-=======
 import { Link } from 'react-router-dom';
->>>>>>> 57f456dc6ce8a85c2c5f6fecb9c07a58225b4e05
 
 const HomePage: React.FC = () => {
   return (
     <div className="font-sans bg-gray-50">
-<<<<<<< HEAD
 
       
 
-=======
->>>>>>> 57f456dc6ce8a85c2c5f6fecb9c07a58225b4e05
       {/* Hero Section */}
       <section className="text-center py-20 bg-gradient-to-r from-blue-100 to-blue-50">
         <h1 className="text-5xl font-bold mb-4 text-blue-800">
