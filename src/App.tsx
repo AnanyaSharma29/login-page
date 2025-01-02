@@ -41,12 +41,13 @@ import PublicHeader from './Pages/PublicPages/PublicHeader';
 import AboutUspublic from './Pages/PublicPages/AboutUspublic';
 import ContactUspublic from './Pages/PublicPages/ContactUSpublic';
 import UserHeader from './Pages/components/UserHeader'; //  UserHeader Component
+import HelpLine from './Pages/Dashboard/HelpLine';
 
 const App: React.FC = () => {
   const location = useLocation();
 
    // Define the routes where the header should not be shown
-   const noHeaderRoutes = ['/user-dashboard', '/consultant-dashboard'];
+   const noHeaderRoutes = ['/user-dashboard', '/consultant-dashboard','/request','/settings','/clients'];
 
    // Determine if the current path is in the noHeaderRoutes list
    const shouldShowHeader = !noHeaderRoutes.includes(location.pathname);
@@ -147,6 +148,7 @@ const App: React.FC = () => {
         <Route path="/article-2" element={<Article2 />} />
         <Route path="/article-3" element={<Article3 />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/help" element={<HelpLine />} />
 
         {/* Service Routes */}
         <Route path="/services" element={<ServicesPage />} />
