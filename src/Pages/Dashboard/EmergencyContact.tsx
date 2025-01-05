@@ -1,27 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 
 interface Contact {
-    id?: string;
+    id: string; // Unique ID for each contact
     name: string;
     contactNumber: string;
     email: string;
 }
 
 const EmergencyContact: React.FC = () => {
-    // Get the role and email from localStorage based on the role
-    const role = localStorage.getItem('role'); // Assuming you store the role
-    const userEmail = role === 'user' ? localStorage.getItem('userEmail') : localStorage.getItem('consultantEmail');
-
-    // Redirect to login if no email is available
-    useEffect(() => {
-        if (!userEmail) {
-            window.location.href = '/login';
-        }
-    }, [userEmail]);
-
     const [contacts, setContacts] = useState<Contact[]>([]);
     const [formData, setFormData] = useState<Contact>({
+        id: '',
         name: '',
         contactNumber: '',
         email: '',
@@ -29,89 +18,64 @@ const EmergencyContact: React.FC = () => {
     const [message, setMessage] = useState<string>('');
     const [messageType, setMessageType] = useState<'success' | 'error' | ''>('');
 
+    // Load contacts from localStorage on component mount
     useEffect(() => {
-        const fetchContacts = async () => {
-            if (userEmail) {
-                try {
-                    const response = await axios.get(`http://localhost:8080/api/emergency-contacts/${userEmail}`);
-                    // Ensure response is an array before setting it
-                    if (Array.isArray(response.data)) {
-                        setContacts(response.data);
-                    } else {
-                        console.error('Expected an array, received:', response.data);
-                    }
-                } catch (error) {
-                    console.error('Error fetching contacts:', error);
-                }
-            }
-        };
+        const savedContacts = localStorage.getItem('emergencyContacts');
+        if (savedContacts) {
+            setContacts(JSON.parse(savedContacts));
+        }
+    }, []);
 
-        fetchContacts();
-    }, [userEmail]);
+    // Save contacts to localStorage whenever they change
+    useEffect(() => {
+        localStorage.setItem('emergencyContacts', JSON.stringify(contacts));
+    }, [contacts]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
 
-    const handleAddContact = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleAddContact = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (contacts.length >= 5) {
             alert('Maximum of 5 contacts allowed!');
             return;
         }
 
-        try {
-            if (userEmail) {
-                const response = await axios.post(`http://localhost:8080/api/emergency-contacts/${userEmail}`, formData);
-                setContacts([...contacts, response.data]);
-                setFormData({ name: '', contactNumber: '', email: '' });
-                setMessage('Contact added successfully!');
-                setMessageType('success');
+        const newContact = { ...formData, id: Date.now().toString() };
+        setContacts([...contacts, newContact]);
+        setFormData({ id: '', name: '', contactNumber: '', email: '' });
+        setMessage('Contact added successfully!');
+        setMessageType('success');
 
-                // Hide the message after 2 seconds
-                setTimeout(() => {
-                    setMessage('');
-                    setMessageType('');
-                }, 2000);
-            }
-        } catch (error) {
-            console.error('Error adding contact:', error);
-            setMessage('Failed to add contact. Please try again.');
-            setMessageType('error');
-
-            // Hide the message after 2 seconds
-            setTimeout(() => {
-                setMessage('');
-                setMessageType('');
-            }, 2000);
-        }
+        // Hide the message after 2 seconds
+        setTimeout(() => {
+            setMessage('');
+            setMessageType('');
+        }, 2000);
     };
 
-    const handleDeleteContact = async (id?: string) => {
-        if (!id || !userEmail) return;
+    const handleDeleteContact = (id: string) => {
+        setContacts(contacts.filter(contact => contact.id !== id));
+        setMessage('Contact deleted successfully!');
+        setMessageType('success');
 
-        try {
-            await axios.delete(`http://localhost:8080/api/emergency-contacts/${userEmail}/${id}`);
-            setContacts(contacts.filter(contact => contact.id !== id));
-            setMessage('Contact deleted successfully!');
-            setMessageType('success');
+        // Hide the message after 2 seconds
+        setTimeout(() => {
+            setMessage('');
+            setMessageType('');
+        }, 2000);
+    };
 
-            // Hide the message after 2 seconds
-            setTimeout(() => {
-                setMessage('');
-                setMessageType('');
-            }, 2000);
-        } catch (error) {
-            console.error('Error deleting contact:', error);
-            setMessage('Failed to delete contact. Please try again.');
-            setMessageType('error');
-
-            // Hide the message after 2 seconds
-            setTimeout(() => {
-                setMessage('');
-                setMessageType('');
-            }, 2000);
+    const handleSOS = () => {
+        const savedContacts = localStorage.getItem('emergencyContacts');
+        if (savedContacts) {
+            const emergencyContacts = JSON.parse(savedContacts) as Contact[];
+            console.log('Emergency contacts:', emergencyContacts);
+            alert(`SOS sent to:\n${emergencyContacts.map(c => `${c.name}: ${c.contactNumber}`).join('\n')}`);
+        } else {
+            alert('No emergency contacts saved!');
         }
     };
 
@@ -199,6 +163,16 @@ const EmergencyContact: React.FC = () => {
                         <p className="text-gray-500 text-center mt-6">No emergency contacts added yet.</p>
                     )}
                 </ul>
+            </div>
+
+            {/* SOS Button */}
+            <div className="text-center mt-10">
+                <button
+                    onClick={handleSOS}
+                    className="bg-red-600 text-white py-3 px-8 rounded-lg hover:bg-red-700 transition duration-200"
+                >
+                    SOS
+                </button>
             </div>
         </div>
     );

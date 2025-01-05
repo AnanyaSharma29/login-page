@@ -29,7 +29,7 @@ const HomePage: React.FC = () => {
       <section className="bg-gradient-to-r from-green-500 to-teal-400 text-white py-12">
         <div className="container mx-auto flex justify-around">
           <div className="text-center">
-            <div className="text-4xl font-bold">8+</div>
+            <div className="text-4xl font-bold">82+</div>
             <div>Experts</div>
           </div>
           <div className="text-center">

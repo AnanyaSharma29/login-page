@@ -58,7 +58,10 @@ const MusicPlayer = () => {
     '/consultant-login',
     '/consultant-signup',
     '/user-consultant',
-    '/consultant-dashboard'
+    '/consultant-dashboard',
+    '/request',
+    '/settings',
+    '/clients'
   ];
 
   if (hiddenPaths.includes(location.pathname)) {
